@@ -23,7 +23,6 @@ setup(
     install_requires = [
         'twisted',
         'enum',
-        'pyOpenSSL',
         'smpp.pdu',
     ],
     tests_require = [

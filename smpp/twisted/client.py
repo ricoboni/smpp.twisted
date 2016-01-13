@@ -14,7 +14,11 @@ Copyright 2009-2010 Mozes, Inc.
    limitations under the License.
 """
 import logging
-from OpenSSL import SSL
+try:
+    from OpenSSL import SSL
+except ImportError:
+    pass
+
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import defer, reactor, ssl
 from twisted.application import service
@@ -52,11 +56,10 @@ class CtxFactory(ssl.ClientContextFactory):
         self.smppConfig = config
     
     def getContext(self):
-        self.method = SSL.SSLv23_METHOD
         ctx = ssl.ClientContextFactory.getContext(self)
         if self.smppConfig.SSLCertificateFile:
+            self.method = SSL.SSLv23_METHOD
             ctx.use_certificate_file(self.smppConfig.SSLCertificateFile)
-        return ctx
 
 class SMPPClientBase(object):
     msgHandler = None
