@@ -14,13 +14,9 @@ Copyright 2009-2010 Mozes, Inc.
    limitations under the License.
 """
 import logging
-try:
-    from OpenSSL import SSL
-except ImportError:
-    pass
 
 from twisted.internet.protocol import ClientFactory
-from twisted.internet import defer, reactor, ssl
+from twisted.internet import defer, reactor
 from twisted.application import service
 from smpp.twisted.protocol import SMPPClientProtocol, DataHandlerResponse
 
@@ -50,16 +46,6 @@ class SMPPClientFactory(ClientFactory):
         self.log.error("Connection failed. Reason: %s" % str(reason))
         self.buildProtocolDeferred.errback(reason)
 
-class CtxFactory(ssl.ClientContextFactory):
-
-    def __init__(self, config):
-        self.smppConfig = config
-    
-    def getContext(self):
-        ctx = ssl.ClientContextFactory.getContext(self)
-        if self.smppConfig.SSLCertificateFile:
-            self.method = SSL.SSLv23_METHOD
-            ctx.use_certificate_file(self.smppConfig.SSLCertificateFile)
 
 class SMPPClientBase(object):
     msgHandler = None
